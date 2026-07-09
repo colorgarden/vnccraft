@@ -33,14 +33,6 @@ Paper 服务端不碰 VNC 协议，只做 TCP 字节转发 + Plugin Message 通�
 | 激光模式 | Ctrl + 滚轮切换 |
 | 滚动 | Tab + 滚轮 |
 
-### 命令
-
-`/vnc`：
-
-- `/vnc connect <id> <host> [port] [password]` — 连接屏幕
-- `/vnc remove <id>` — 删除屏幕
-- `/vnc disconnect <id>` — 断开连接
-
 ### 音频
 
 开启音频需 VNC 服务器端 PulseAudio TCP 模块已加载（端口 4713）。

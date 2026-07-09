@@ -48,9 +48,6 @@ public class VNCPlugin extends JavaPlugin implements Listener, PluginMessageList
         // Register events
         getServer().getPluginManager().registerEvents(this, this);
 
-        // Register commands
-        getCommand("vnc").setExecutor(new top.colorgarden.vnccraft.plugin.command.VNCCommand());
-
         // Tick task
         Bukkit.getScheduler().runTaskTimer(this, () -> VNCScreenManager.getInstance().tick(), 1L, 1L);
 
