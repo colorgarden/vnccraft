@@ -1,14 +1,60 @@
-# paperweight-test-plugin
+# VNCCraft (Paper)
 
-jmp's test plugin for [`paperweight-userdev`](https://github.com/PaperMC/paperweight/tree/main/paperweight-userdev) development
+VNCCraft Paper 服务端插件。配合 Fabric 客户端模组使用，将 VNC 远程桌面带入 Minecraft。
 
-(also serves as an example until more thorough documentation is created)
+## 架构
 
-### notes (read these)
+```
+VNC 服务器 ←TCP→ Paper 插件 (纯隧道) ←Plugin Channel→ Fabric 客户端 (Vernacular 解码 + DrawLib 渲染)
+```
 
-- `build.gradle.kts` and `settings.gradle.kts` both contain important configuration.
-- `paperweight-userdev` automatically detects shadow and will use `shadowJar` as input for `reobfJar`. This means no extra configuration is required to use `paperweight-userdev` with shadow. See the `shadow` branch on this repository for an example usage of shadow with `paperweight-userdev`.
-- The `run-paper` Gradle plugin is optional, it integrates with paperweight and allows for launching a test server with your plugin through the `runServer` and `runMojangMappedServer` tasks.
-- Due to a [gradle bug](https://github.com/gradle/gradle/issues/17559), independently applying `paperweight-userdev` to multiple projects in a build can result in errors. To work around this, apply `paperweight-userdev` to the root project with `apply false` (i.e., `id("...") version "..." apply false` in Kotlin DSL), and then when applying `paperweight-userdev` to subprojects don't include a version specification. A more advanced solution would involve adding `paperweight-userdev` as a dependency to your build logic, see [`reflection-remapper`](https://github.com/jpenilla/reflection-remapper) and the [`source-remap`](https://github.com/PaperMC/paperweight-test-plugin/tree/source-remap) branch on this repo for examples of this.
-- The [`source-remap`](https://github.com/PaperMC/paperweight-test-plugin/tree/source-remap) branch on this repo has a special `remapPluginSources` task to remap the source code in `src/main/java` from spigot to Mojang mappings, outputting remapped source in `/src/main/mojangMappedJava`. Note that this will only remap your code, not update it from a prior version. Meaning you must be using the dev bundle for the Minecraft version your source code is for when remapping.
-- `paperweight-userdev` doesn't provide any utilities for doing reflection. [`reflection-remapper`](https://github.com/jpenilla/reflection-remapper) is a companion library to `paperweight-userdev` assisting with reflection on remapped code.
+Paper 服务端不碰 VNC 协议，只做 TCP 字节转发 + Plugin Message 通道。客户端运行完整 VNC 协议栈。
+
+## 安装
+
+### 服务端
+
+1. 将 JAR 放入 Paper 服务器 `plugins/` 目录
+2. 重启服务器
+
+### 客户端
+
+需要安装 Fabric 客户端模组（`fabric` 分支），包含 Vernacular + DrawLib。客户端同时兼容 Paper 插件和 Fabric 服务端，自动检测。
+
+## 使用
+
+安装后无需额外配置。所有操作通过客户端木铲工具完成：
+
+| 操作 | 方式 |
+|------|------|
+| 放置屏幕 | 手持木铲右键方块表面 |
+| 删除屏幕 | 左键已有屏幕 |
+| 连接 VNC | Shift + 右键屏幕，输入信息 |
+| 激光模式 | Ctrl + 滚轮切换 |
+| 滚动 | Tab + 滚轮 |
+
+### 命令
+
+`/vnc`：
+
+- `/vnc connect <id> <host> [port] [password]` — 连接屏幕
+- `/vnc remove <id>` — 删除屏幕
+- `/vnc disconnect <id>` — 断开连接
+
+### 音频
+
+开启音频需 VNC 服务器端 PulseAudio TCP 模块已加载（端口 4713）。
+
+## 构建
+
+需要 JDK 25 + Gradle：
+
+```bash
+./gradlew build
+```
+
+JAR 输出在 `build/libs/`。
+
+## 协议
+
+AGPL-3.0
