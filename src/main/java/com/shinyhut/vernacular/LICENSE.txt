@@ -1,0 +1,4 @@
+Vernacular VNC
+Copyright (c) shinyhut
+Licensed under the MIT License
+https://github.com/shinyhut/vernacular-vnc

@@ -1,0 +1,16 @@
+{
+	"required": true,
+	"package": "top.colorgarden.vnccraft.client.mixin",
+	"compatibilityLevel": "JAVA_25",
+	"client": [
+		"ExampleClientMixin",
+		"GuiRenderMixin",
+		"WindowAccessor"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"overwrites": {
+		"requireAnnotations": true
+	}
+}
