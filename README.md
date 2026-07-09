@@ -31,15 +31,6 @@ VNC 服务器 ←TCP→ Fabric 服务端 (纯隧道) ←Fabric 网络包→ Fabr
 | 激光模式 | Ctrl + 滚轮切换，准星控制远程光标 |
 | 滚动 | Tab + 滚轮 |
 
-### 命令
-
-`/vnc`（所有玩家可用）：
-
-- `/vnc list` — 列出所有屏幕
-- `/vnc remove <id>` — 删除指定屏幕
-- `/vnc connect <id> <host> [port] [password]` — 连接
-- `/vnc disconnect <id>` — 断开
-
 ### 音频
 
 连接页面可开启 PulseAudio 音频转发。需确保 VNC 服务器端 PulseAudio TCP 模块已加载（端口 4713）。

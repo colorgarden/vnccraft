@@ -6,15 +6,11 @@ import top.colorgarden.vnccraft.network.*;
 import top.colorgarden.vnccraft.vnc.TunnelManager;
 import top.colorgarden.vnccraft.vnc.VNCManager;
 import top.colorgarden.vnccraft.vnc.VNCScreenInstance;
-import com.mojang.brigadier.arguments.IntegerArgumentType;
-import com.mojang.brigadier.arguments.StringArgumentType;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
@@ -69,9 +65,6 @@ public class VNCCraft implements ModInitializer {
 
         // 6. Handle C2S packets
         registerC2SHandlers();
-
-        // 7. Register commands
-        registerCommands();
 
         LOGGER.info("VNCCraft initialized");
     }
@@ -191,103 +184,6 @@ public class VNCCraft implements ModInitializer {
                 });
     }
 
-    private void registerCommands() {
-        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
-            dispatcher.register(Commands.literal("vnc")
-
-                    // /vnc place [resW] [resH]
-                    .then(Commands.literal("place")
-                            .executes(ctx -> {
-                                // Place at player's look position with default resolution
-                                // Client handles the actual placement via VNCToolHandler
-                                ctx.getSource().sendSuccess(() ->
-                                        Component.translatable("vnccraft.msg.use_tool"), false);
-                                return 1;
-                            })
-                    )
-
-                    // /vnc list
-                    .then(Commands.literal("list")
-                            .executes(ctx -> {
-                                ctx.getSource().sendSuccess(() ->
-                                        Component.translatable("vnccraft.msg.use_tool"), false);
-                                return 1;
-                            })
-                    )
-
-                    // /vnc remove <screenId>
-                    .then(Commands.literal("remove")
-                            .then(Commands.argument("screenId", IntegerArgumentType.integer(0))
-                                    .executes(ctx -> {
-                                        int id = IntegerArgumentType.getInteger(ctx, "screenId");
-                                        VNCManager mgr = VNCManager.getInstance();
-                                        if (mgr != null) {
-                                            mgr.removeScreen(id);
-                                        }
-                                        ctx.getSource().sendSuccess(() ->
-                                                Component.translatable("vnccraft.msg.removed", id), true);
-                                        return 1;
-                                    })
-                            )
-                    )
-
-                    // /vnc connect <screenId> <host> [port] [password]
-                    .then(Commands.literal("connect")
-                            .then(Commands.argument("screenId", IntegerArgumentType.integer(0))
-                                    .then(Commands.argument("host", StringArgumentType.string())
-                                            .then(Commands.argument("port", IntegerArgumentType.integer(1, 65535))
-                                                    .then(Commands.argument("password", StringArgumentType.greedyString())
-                                                            .executes(ctx -> {
-                                                                int id = IntegerArgumentType.getInteger(ctx, "screenId");
-                                                                String host = StringArgumentType.getString(ctx, "host");
-                                                                int port = IntegerArgumentType.getInteger(ctx, "port");
-                                                                String password = StringArgumentType.getString(ctx, "password");
-                                                                VNCManager mgr = VNCManager.getInstance();
-                                                                if (mgr != null) {
-                                                                    mgr.connectScreen(id, host, port, password,
-                                                                            VNCConfig.DEFAULT_RES_WIDTH, VNCConfig.DEFAULT_RES_HEIGHT, 0, "");
-                                                                }
-                                                                ctx.getSource().sendSuccess(() ->
-                                                                        Component.translatable("vnccraft.msg.connecting", id, host, port), true);
-                                                                return 1;
-                                                            })
-                                                    )
-                                                    .executes(ctx -> {
-                                                        int id = IntegerArgumentType.getInteger(ctx, "screenId");
-                                                        String host = StringArgumentType.getString(ctx, "host");
-                                                        int port = IntegerArgumentType.getInteger(ctx, "port");
-                                                        VNCManager mgr = VNCManager.getInstance();
-                                                        if (mgr != null) {
-                                                            mgr.connectScreen(id, host, port, "",
-                                                                    VNCConfig.DEFAULT_RES_WIDTH, VNCConfig.DEFAULT_RES_HEIGHT, 0, "");
-                                                        }
-                                                        ctx.getSource().sendSuccess(() ->
-                                                                Component.translatable("vnccraft.msg.connecting", id, host, port), true);
-                                                        return 1;
-                                                    })
-                                            )
-                                    )
-                            )
-                    )
-
-                    // /vnc disconnect <screenId>
-                    .then(Commands.literal("disconnect")
-                            .then(Commands.argument("screenId", IntegerArgumentType.integer(0))
-                                    .executes(ctx -> {
-                                        int id = IntegerArgumentType.getInteger(ctx, "screenId");
-                                        VNCManager mgr = VNCManager.getInstance();
-                                        if (mgr != null) {
-                                            mgr.disconnectScreen(id);
-                                        }
-                                        ctx.getSource().sendSuccess(() ->
-                                                Component.translatable("vnccraft.msg.disconnected", id), true);
-                                        return 1;
-                                    })
-                            )
-                    )
-            );
-        });
-    }
 
     public static Identifier id(String path) {
         return Identifier.fromNamespaceAndPath(MOD_ID, path);
