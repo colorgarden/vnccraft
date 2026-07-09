@@ -33,7 +33,7 @@ VNC 服务器 ←TCP→ Fabric 服务端 (纯隧道) ←Fabric 网络包→ Fabr
 
 ### 音频
 
-连接页面可开启 PulseAudio 音频转发。需确保 VNC 服务器端 PulseAudio TCP 模块已加载（端口 4713）。
+连接页面可开启 PulseAudio 音频转发。需确保 VNC 服务器端 PulseAudio TCP 模块已加载。
 
 ## 构建
 
