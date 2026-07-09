@@ -12,7 +12,7 @@ VNC 服务器 ←TCP→ Fabric 服务端 (纯隧道) ←Fabric 网络包→ Fabr
 
 ## 安装
 
-1. 安装 Fabric Loader（MC 26.1.2 / 1.21.4）
+1. 安装 Fabric Loader（MC 26.1.2）
 2. 安装依赖：**DrawLib**（渲染库）和 Fabric API
 3. 将 VNCCraft JAR 放入 `mods/` 目录
 
